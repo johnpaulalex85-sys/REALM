@@ -2,6 +2,8 @@
 
 > A full-stack, medieval fantasy RPG life-gamification application built with **React**, **TypeScript**, **Vite**, **Python Flask**, **PyMongo**, and **MongoDB Atlas**. Turn your real-world daily habits, tasks, and goals into an epic hero quest!
 
+🌐 **Live Application**: [https://realm-dtga.onrender.com/](https://realm-dtga.onrender.com/)
+
 ---
 
 ## 🏰 Features
@@ -168,5 +170,3 @@ The Vite dev server will run on: `http://localhost:5173`
 2. **JWT Route Guarding**: Authenticated endpoints verify JWT tokens via the `@token_required` decorator.
 3. **Server-Side Validation**: All quest progress, gold earnings, XP calculations, and item transactions are calculated and validated server-side.
 4. **Duplicate Claim Protection**: The backend enforces unique records in `quest_completions` and daily date checks on `streaks` to prevent duplicate XP/gold farming.
-"# REALM" 
-"# REALM" 
