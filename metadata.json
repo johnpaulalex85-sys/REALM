@@ -1,0 +1,6 @@
+{
+  "name": "REALM - RPG Life Gamification Dashboard",
+  "description": "An immersive, cinematic RPG dashboard to level up your real life with quest tracking, character attributes, streak bonuses, inventory, and achievements.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: realm-life-rpg
+    env: python
+    buildCommand: "npm install && npm run build && pip install -r backend/requirements.txt"
+    startCommand: "gunicorn --bind 0.0.0.0:$PORT 'backend.app:create_app()'"
+    envVars:
+      - key: MONGO_URI
+        value: mongodb+srv://kuriankurian405_db_user:KpqwSMq9uHFXDAMA@cluster0.0yqlygw.mongodb.net/raft_booking?appName=Cluster0
+      - key: MONGO_DB_NAME
+        value: raft_booking
+      - key: JWT_SECRET
+        value: f7441bcb35152cab40bef97cd45a1721ad293b0c6c2f827c490af13057c646b4
+      - key: FLASK_ENV
+        value: production
+      - key: PORT
+        value: 10000
