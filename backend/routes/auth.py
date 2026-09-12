@@ -6,6 +6,8 @@ from backend.config import Config
 from backend.utils.validators import is_valid_email, is_valid_password
 from backend.utils.responses import success_response, error_response
 from backend.middleware.auth import token_required
+from werkzeug.security import check_password_hash
+
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/api/auth')
 
@@ -162,10 +164,68 @@ def login():
     if not user:
         return error_response('INVALID_CREDENTIALS', 'Invalid email or password', 401)
 
-    if not bcrypt.checkpw(password.encode('utf-8'), user['password_hash'].encode('utf-8')):
+    stored_hash = user.get('password_hash', '')
+    is_valid = False
+
+    # 1. Try Werkzeug password hash check (e.g. pbkdf2:sha256)
+    if stored_hash.startswith(('pbkdf2:', 'scrypt:', 'sha256:')):
+        try:
+            is_valid = check_password_hash(stored_hash, password)
+        except Exception:
+            is_valid = False
+
+    # 2. Try Bcrypt password hash check
+    if not is_valid and stored_hash:
+        try:
+            is_valid = bcrypt.checkpw(password.encode('utf-8'), stored_hash.encode('utf-8'))
+        except Exception:
+            is_valid = False
+
+    # 3. Fallback for legacy plain-text password check
+    if not is_valid and stored_hash == password:
+        is_valid = True
+
+    if not is_valid:
         return error_response('INVALID_CREDENTIALS', 'Invalid email or password', 401)
 
+    # Auto-upgrade stored password hash to bcrypt if it wasn't bcrypt
+    try:
+        if not stored_hash.startswith('$2b$') and not stored_hash.startswith('$2a$'):
+            new_bcrypt_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+            db.users.update_one({'_id': user['_id']}, {'$set': {'password_hash': new_bcrypt_hash, 'updated_at': datetime.utcnow()}})
+    except Exception:
+        pass
+
     user_id = str(user['_id'])
+
+    # Ensure character profile exists (for users created via shared DB)
+    char = db.characters.find_one({'user_id': user_id})
+    if not char:
+        name = user.get('name', 'HERO')
+        char_doc = {
+            'user_id': user_id,
+            'name': name.upper(),
+            'title': 'Novice Wanderer',
+            'level': 0,
+            'health': 100,
+            'maxHealth': 100,
+            'energy': 100,
+            'maxEnergy': 100,
+            'currentXP': 0,
+            'maxXP': 200,
+            'gold': 50,
+            'totalXP': 0,
+            'streakDays': 1,
+            'class': 'Novice Initiate',
+            'attributes': INITIAL_ATTRIBUTES,
+            'equippedItems': ['trackers_blade_item', 'mindful_cloak'],
+            'created_at': datetime.utcnow(),
+            'updated_at': datetime.utcnow()
+        }
+        db.characters.insert_one(char_doc)
+        from backend.seed import copy_seed_templates_for_user
+        copy_seed_templates_for_user(db, user_id)
+
     token = generate_jwt_token(user_id)
     sanitized = sanitize_user(user)
 
