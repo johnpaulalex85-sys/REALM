@@ -10,9 +10,7 @@ import {
 } from 'lucide-react';
 import { Quest } from '../types';
 import { soundFx } from '../sound';
-import deepWorkImg from '../assets/images/quest_deepwork_1789200577920.jpg';
-import exerciseImg from '../assets/images/quest_exercise_1789200594078.jpg';
-import readingImg from '../assets/images/quest_reading_1789200614011.jpg';
+import { getQuestPicture } from '../utils/questImages';
 
 interface ActiveQuestsProps {
   quests: Quest[];
@@ -50,15 +48,6 @@ export const ActiveQuests: React.FC<ActiveQuestsProps> = ({
     );
   };
 
-  const getQuestImage = (title: string, category: Quest['category']) => {
-    if (title.toLowerCase().includes('deep work') || title.toLowerCase().includes('study')) {
-      return deepWorkImg;
-    }
-    if (title.toLowerCase().includes('exercise') || title.toLowerCase().includes('workout')) {
-      return exerciseImg;
-    }
-    return readingImg;
-  };
 
   const getCardStyling = (category: Quest['category']) => {
     switch (category) {
@@ -168,7 +157,7 @@ export const ActiveQuests: React.FC<ActiveQuestsProps> = ({
         {quests.map((quest) => {
           const style = getCardStyling(quest.category);
           const isCompleted = quest.progress >= 100;
-          const questImg = quest.image || getQuestImage(quest.title, quest.category);
+          const questImg = getQuestPicture(quest);
 
           return (
             <div

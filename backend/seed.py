@@ -18,7 +18,8 @@ SEED_QUESTS = [
         'currentMinutes': 0,
         'frequency': 'Daily',
         'quote': '“Focus is the key to extraordinary results.”',
-        'iconName': 'book'
+        'iconName': 'book',
+        'image': 'quest_deepwork'
     },
     {
         'title': 'Morning Exercise',
@@ -37,7 +38,8 @@ SEED_QUESTS = [
         'currentMinutes': 0,
         'frequency': 'Daily',
         'quote': '“Strength doesn’t come from what you can do, but overcoming what you once thought you couldn’t.”',
-        'iconName': 'dumbbell'
+        'iconName': 'dumbbell',
+        'image': 'quest_gym_weights'
     },
     {
         'title': 'Read a Book',
@@ -56,7 +58,8 @@ SEED_QUESTS = [
         'currentMinutes': 0,
         'frequency': 'Daily',
         'quote': '“A reader lives a thousand lives before he dies. The man who never reads lives only one.”',
-        'iconName': 'scroll'
+        'iconName': 'scroll',
+        'image': 'quest_reading'
     },
     {
         'title': 'Plan Your Day',
@@ -75,7 +78,8 @@ SEED_QUESTS = [
         'currentMinutes': 0,
         'frequency': 'Daily',
         'quote': '“By failing to prepare, you are preparing to fail.”',
-        'iconName': 'scroll'
+        'iconName': 'scroll',
+        'image': 'quest_plan_day'
     },
     {
         'title': 'Meditation',
@@ -94,7 +98,8 @@ SEED_QUESTS = [
         'currentMinutes': 0,
         'frequency': 'Daily',
         'quote': '“Quiet the mind, and the soul will speak.”',
-        'iconName': 'brain'
+        'iconName': 'brain',
+        'image': 'quest_meditation'
     },
     {
         'title': 'Drink Water',
@@ -113,7 +118,8 @@ SEED_QUESTS = [
         'currentMinutes': 0,
         'frequency': 'Daily',
         'quote': '“Water is the driving force of all nature and energy.”',
-        'iconName': 'shield'
+        'iconName': 'shield',
+        'image': 'quest_water_bottle'
     },
     {
         'title': 'Complete Assignment',
@@ -132,7 +138,8 @@ SEED_QUESTS = [
         'currentMinutes': 0,
         'frequency': 'Weekly',
         'quote': '“Small disciplines repeated with consistency lead to great achievements.”',
-        'iconName': 'book'
+        'iconName': 'book',
+        'image': 'quest_assignment'
     },
     {
         'title': 'Clean Your Space',
@@ -151,7 +158,8 @@ SEED_QUESTS = [
         'currentMinutes': 0,
         'frequency': 'Daily',
         'quote': '“Clear your space to clear your mind.”',
-        'iconName': 'shield'
+        'iconName': 'shield',
+        'image': 'quest_clean_space'
     }
 ]
 

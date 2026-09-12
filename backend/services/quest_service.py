@@ -47,7 +47,7 @@ def create_quest(db, user_id: str, quest_data: dict) -> dict:
         'quote': quest_data.get('quote', '“Step by step, the quest is won.”'),
         'estimatedMinutes': int(quest_data.get('estimatedMinutes', 30)),
         'currentMinutes': 0,
-        'image': quest_data.get('image', None),
+        'image': quest_data.get('image') or ('quest_deepwork' if category == 'STUDY' else 'quest_gym_weights' if category == 'HEALTH' else 'quest_plan_day' if category in ['WORK', 'CAREER'] else 'quest_clean_space' if category == 'DISCIPLINE' else 'quest_reading'),
         'created_at': datetime.utcnow(),
         'updated_at': datetime.utcnow()
     }

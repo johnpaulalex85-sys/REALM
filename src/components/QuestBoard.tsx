@@ -24,6 +24,13 @@ import { Quest } from '../types';
 import { soundFx } from '../sound';
 import parchmentLanternImg from '../assets/images/parchment_lantern_1789201037103.jpg';
 import realmBg from '../assets/images/realm_fantasy_bg_1789200503712.jpg';
+import { 
+  getQuestPicture, 
+  questDeepWork, 
+  questInscribeBanner, 
+  questGoalCliff, 
+  questCampfireCitadel 
+} from '../utils/questImages';
 
 interface QuestBoardProps {
   quests: Quest[];
@@ -283,19 +290,16 @@ export const QuestBoard: React.FC<QuestBoardProps> = ({
                   `}
                 >
                   {/* Top Image Banner */}
-                  <div className="relative w-full h-36 overflow-hidden">
-                    {quest.image ? (
-                      <img
-                        src={quest.image}
-                        alt={quest.title}
-                        referrerPolicy="no-referrer"
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-purple-950/40 flex items-center justify-center">
-                        <Sparkles className="w-8 h-8 text-purple-400" />
-                      </div>
-                    )}
+                  <div className="relative w-full h-36 overflow-hidden bg-purple-950/40">
+                    <img
+                      src={getQuestPicture(quest)}
+                      alt={quest.title}
+                      referrerPolicy="no-referrer"
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 brightness-[0.92] group-hover:brightness-105"
+                      onError={(e) => {
+                        e.currentTarget.src = questDeepWork;
+                      }}
+                    />
 
                     {/* Dark gradient shadow on bottom of image for readability */}
                     <div className="absolute inset-0 bg-gradient-to-t from-[#13102d] via-transparent to-transparent opacity-90" />
@@ -418,72 +422,132 @@ export const QuestBoard: React.FC<QuestBoardProps> = ({
           {/* Bottom Row: Create Your Own Quest + 2 Locked Quests */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Card 1: Create Your Own Quest */}
-            <div className="rounded-2xl p-4 bg-gradient-to-b from-[#140e33]/90 to-[#0c0721]/95 border border-purple-600/40 shadow-xl flex flex-col items-center text-center justify-between min-h-[170px] group">
-              <div className="flex flex-col items-center">
-                <button
-                  onClick={() => {
-                    soundFx.playClick();
-                    onOpenAddQuest();
-                  }}
-                  className="w-11 h-11 rounded-full bg-purple-700/60 hover:bg-purple-600 border border-purple-400/60 flex items-center justify-center text-white shadow-[0_0_15px_rgba(168,85,247,0.5)] transition-all mb-2.5 group-hover:scale-105"
-                >
-                  <Plus className="w-6 h-6 stroke-[2.5]" />
-                </button>
-                <h3 className="font-sans text-sm font-black text-white tracking-wide">
-                  Create Your Own Quest
-                </h3>
-                <p className="text-[11px] text-slate-400 font-medium mt-1 px-2 leading-relaxed">
-                  Have a unique goal? Create a custom quest and make it part of your journey.
-                </p>
-              </div>
-
-              <button
-                onClick={() => {
-                  soundFx.playClick();
-                  onOpenAddQuest();
-                }}
-                className="mt-3 px-4 py-1.5 rounded-xl bg-purple-900/80 hover:bg-purple-700 text-purple-200 text-xs font-bold border border-purple-500/50 shadow-[0_0_12px_rgba(168,85,247,0.3)] transition-all flex items-center gap-1.5"
-              >
-                <span>Add Quest</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-
-            {/* Card 2: Locked Quest 1 */}
-            <div className="rounded-2xl p-4 bg-gradient-to-b from-[#100e26]/80 to-[#0a0718]/90 border border-purple-950/50 shadow-lg flex flex-col items-center text-center justify-between min-h-[170px] opacity-75">
-              <div className="flex flex-col items-center">
-                <div className="w-11 h-11 rounded-full bg-[#171433] border border-purple-800/40 flex items-center justify-center text-slate-400 mb-2.5">
-                  <Lock className="w-5 h-5 text-purple-400/70" />
+            <div 
+              onClick={() => {
+                soundFx.playClick();
+                onOpenAddQuest();
+              }}
+              className="rounded-2xl overflow-hidden bg-gradient-to-b from-[#140e33]/95 to-[#0c0721]/95 border border-purple-500/50 hover:border-purple-400/80 shadow-xl flex flex-col justify-between group cursor-pointer transition-all duration-300 hover:shadow-[0_0_20px_rgba(168,85,247,0.35)]"
+            >
+              <div className="relative w-full h-28 overflow-hidden bg-purple-950/60">
+                <img
+                  src={questInscribeBanner}
+                  alt="Inscribe Quest"
+                  referrerPolicy="no-referrer"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 brightness-90"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0c0721] via-[#0c0721]/60 to-transparent" />
+                <div className="absolute top-2.5 right-2.5">
+                  <span className="px-2 py-0.5 rounded-md text-[9px] font-black tracking-wider bg-purple-950/90 text-purple-300 border border-purple-400/60 shadow-[0_0_8px_rgba(168,85,247,0.4)] backdrop-blur-md">
+                    CUSTOM FORGE
+                  </span>
                 </div>
-                <h3 className="font-sans text-sm font-black text-slate-300 tracking-wide">
-                  Locked Quest
-                </h3>
-                <p className="text-[11px] text-slate-500 font-medium mt-1 px-2 leading-relaxed">
-                  Reach Level 15 to unlock this special quest.
-                </p>
+                <div className="absolute -bottom-3 left-4 w-9 h-9 rounded-xl bg-purple-600 border-2 border-purple-300 flex items-center justify-center text-white shadow-[0_0_12px_rgba(168,85,247,0.6)] group-hover:scale-110 transition-transform">
+                  <Plus className="w-5 h-5 stroke-[2.5]" />
+                </div>
               </div>
 
-              <div className="mt-3 w-full py-1.5 px-4 rounded-xl bg-[#14122b] text-slate-500 text-xs font-bold border border-purple-950 text-center cursor-not-allowed">
-                Locked
+              <div className="p-4 pt-4 flex-1 flex flex-col justify-between">
+                <div>
+                  <h3 className="font-sans text-sm font-black text-white tracking-wide group-hover:text-purple-200 transition-colors">
+                    Create Your Own Quest
+                  </h3>
+                  <p className="text-[11px] text-slate-400 font-medium mt-1 leading-relaxed">
+                    Have a unique personal goal? Forge a custom quest and track it on your board.
+                  </p>
+                </div>
+
+                <div className="mt-3.5 flex items-center justify-between pt-2 border-t border-white/5">
+                  <span className="text-[10px] font-bold text-purple-300">
+                    Custom Rewards & Attributes
+                  </span>
+                  <span className="px-2.5 py-1 rounded-lg bg-purple-900/80 hover:bg-purple-700 text-purple-200 text-[11px] font-bold border border-purple-500/50 shadow-[0_0_8px_rgba(168,85,247,0.3)] transition-all flex items-center gap-1">
+                    <span>Inscribe</span>
+                    <ArrowRight className="w-3 h-3" />
+                  </span>
+                </div>
               </div>
             </div>
 
-            {/* Card 3: Locked Quest 2 */}
-            <div className="rounded-2xl p-4 bg-gradient-to-b from-[#100e26]/80 to-[#0a0718]/90 border border-purple-950/50 shadow-lg flex flex-col items-center text-center justify-between min-h-[170px] opacity-75">
-              <div className="flex flex-col items-center">
-                <div className="w-11 h-11 rounded-full bg-[#171433] border border-purple-800/40 flex items-center justify-center text-slate-400 mb-2.5">
-                  <Lock className="w-5 h-5 text-purple-400/70" />
+            {/* Card 2: Locked Quest 1 (Summit of Reality) */}
+            <div className="rounded-2xl overflow-hidden bg-gradient-to-b from-[#100e26]/90 to-[#0a0718]/95 border border-purple-950/60 shadow-lg flex flex-col justify-between opacity-85 hover:opacity-95 transition-opacity">
+              <div className="relative w-full h-28 overflow-hidden bg-purple-950/60">
+                <img
+                  src={questGoalCliff}
+                  alt="Locked Quest: Summit of Reality"
+                  referrerPolicy="no-referrer"
+                  className="w-full h-full object-cover filter grayscale-[40%] contrast-110"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0a0718] via-[#0a0718]/70 to-transparent" />
+                <div className="absolute top-2.5 right-2.5">
+                  <span className="px-2 py-0.5 rounded-md text-[9px] font-black tracking-wider bg-amber-950/90 text-amber-300 border border-amber-500/50 shadow-[0_0_8px_rgba(245,158,11,0.3)] backdrop-blur-md">
+                    LEVEL 15
+                  </span>
                 </div>
-                <h3 className="font-sans text-sm font-black text-slate-300 tracking-wide">
-                  Locked Quest
-                </h3>
-                <p className="text-[11px] text-slate-500 font-medium mt-1 px-2 leading-relaxed">
-                  Complete 10 quests to unlock this special quest.
-                </p>
+                <div className="absolute -bottom-3 left-4 w-9 h-9 rounded-xl bg-[#1d1736] border border-amber-500/50 flex items-center justify-center text-amber-400 shadow-[0_0_12px_rgba(245,158,11,0.3)]">
+                  <Lock className="w-4 h-4" />
+                </div>
               </div>
 
-              <div className="mt-3 w-full py-1.5 px-4 rounded-xl bg-[#14122b] text-slate-500 text-xs font-bold border border-purple-950 text-center cursor-not-allowed">
-                Locked
+              <div className="p-4 pt-4 flex-1 flex flex-col justify-between">
+                <div>
+                  <h3 className="font-sans text-sm font-black text-slate-300 tracking-wide">
+                    Summit of Reality
+                  </h3>
+                  <p className="text-[11px] text-slate-500 font-medium mt-1 leading-relaxed">
+                    Ascend to Level 15 to unlock this legendary trial and reap massive rewards.
+                  </p>
+                </div>
+
+                <div className="mt-3.5 flex items-center justify-between pt-2 border-t border-white/5">
+                  <span className="text-[10px] font-bold text-amber-400/80">
+                    +1,000 XP · Legendary Bounty
+                  </span>
+                  <span className="px-2.5 py-1 rounded-lg bg-[#14122b] text-slate-500 text-[11px] font-bold border border-purple-950/60 cursor-not-allowed">
+                    Locked
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Card 3: Locked Quest 2 (Citadel of Guardians) */}
+            <div className="rounded-2xl overflow-hidden bg-gradient-to-b from-[#100e26]/90 to-[#0a0718]/95 border border-purple-950/60 shadow-lg flex flex-col justify-between opacity-85 hover:opacity-95 transition-opacity">
+              <div className="relative w-full h-28 overflow-hidden bg-purple-950/60">
+                <img
+                  src={questCampfireCitadel}
+                  alt="Locked Quest: Citadel of Guardians"
+                  referrerPolicy="no-referrer"
+                  className="w-full h-full object-cover filter grayscale-[40%] contrast-110"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0a0718] via-[#0a0718]/70 to-transparent" />
+                <div className="absolute top-2.5 right-2.5">
+                  <span className="px-2 py-0.5 rounded-md text-[9px] font-black tracking-wider bg-purple-950/90 text-purple-300 border border-purple-500/50 shadow-[0_0_8px_rgba(168,85,247,0.3)] backdrop-blur-md">
+                    10 QUESTS
+                  </span>
+                </div>
+                <div className="absolute -bottom-3 left-4 w-9 h-9 rounded-xl bg-[#1d1736] border border-purple-500/50 flex items-center justify-center text-purple-400 shadow-[0_0_12px_rgba(168,85,247,0.3)]">
+                  <Lock className="w-4 h-4" />
+                </div>
+              </div>
+
+              <div className="p-4 pt-4 flex-1 flex flex-col justify-between">
+                <div>
+                  <h3 className="font-sans text-sm font-black text-slate-300 tracking-wide">
+                    Citadel of Guardians
+                  </h3>
+                  <p className="text-[11px] text-slate-500 font-medium mt-1 leading-relaxed">
+                    Complete 10 total quests to unlock the ancient campfire sanctuary trial.
+                  </p>
+                </div>
+
+                <div className="mt-3.5 flex items-center justify-between pt-2 border-t border-white/5">
+                  <span className="text-[10px] font-bold text-purple-400/80">
+                    +750 XP · Relic Cache
+                  </span>
+                  <span className="px-2.5 py-1 rounded-lg bg-[#14122b] text-slate-500 text-[11px] font-bold border border-purple-950/60 cursor-not-allowed">
+                    Locked
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -505,19 +569,16 @@ export const QuestBoard: React.FC<QuestBoardProps> = ({
             </h2>
 
             {/* Selected Quest Image Preview */}
-            <div className="relative w-full h-44 rounded-xl overflow-hidden border border-white/10 shadow-lg">
-              {selectedQuest.image ? (
-                <img
-                  src={selectedQuest.image}
-                  alt={selectedQuest.title}
-                  referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="w-full h-full bg-purple-950/40 flex items-center justify-center">
-                  <Sparkles className="w-8 h-8 text-purple-400" />
-                </div>
-              )}
+            <div className="relative w-full h-44 rounded-xl overflow-hidden border border-cyan-500/40 shadow-xl bg-purple-950/40 group">
+              <img
+                src={getQuestPicture(selectedQuest)}
+                alt={selectedQuest?.title || 'Quest Preview'}
+                referrerPolicy="no-referrer"
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                onError={(e) => {
+                  e.currentTarget.src = questDeepWork;
+                }}
+              />
               {/* Overlay shadow */}
               <div className="absolute inset-0 bg-gradient-to-t from-[#0a0920] via-transparent to-transparent opacity-80" />
 

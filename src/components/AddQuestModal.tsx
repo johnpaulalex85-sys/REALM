@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X, Plus, Sparkles, BookOpen, Dumbbell, Scroll, Brain, Shield } from 'lucide-react';
 import { AttributeType, Quest } from '../types';
 import { soundFx } from '../sound';
+import { getQuestPicture } from '../utils/questImages';
 
 interface AddQuestModalProps {
   isOpen: boolean;
@@ -55,7 +56,8 @@ export const AddQuestModal: React.FC<AddQuestModalProps> = ({
       attribute,
       xpReward: Number(xpReward) || 200,
       goldReward: Number(goldReward) || 30,
-      iconName: iconMap[category]
+      iconName: iconMap[category],
+      image: getQuestPicture({ category, title })
     });
 
     setTitle('');

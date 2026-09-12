@@ -35,6 +35,7 @@ import {
 import { Quest, AttributeType, RecentActivityItem } from './types';
 import { soundFx } from './sound';
 import { Sparkles, RefreshCw, LogOut } from 'lucide-react';
+import { getQuestPicture } from './utils/questImages';
 
 export default function App() {
   const { isAuthenticated, loading: authLoading, logout } = useAuth();
@@ -145,7 +146,10 @@ export default function App() {
       }
 
       if (data.quests && Array.isArray(data.quests)) {
-        setQuests(data.quests);
+        setQuests(data.quests.map((q: Quest) => ({
+          ...q,
+          image: getQuestPicture(q)
+        })));
       }
 
       if (data.recent_activity && Array.isArray(data.recent_activity)) {
@@ -371,7 +375,8 @@ export default function App() {
   const handleAddQuest = async (newQuestData: Omit<Quest, 'id' | 'progress'> | Quest) => {
     try {
       const created = await api.quests.createQuest(newQuestData);
-      setQuests(prev => [created, ...prev]);
+      const withImg: Quest = { ...created, image: getQuestPicture(created) };
+      setQuests(prev => [withImg, ...prev]);
       soundFx.playQuestComplete();
       showToast(`New Quest Inscribed: "${created.title}" saved to MongoDB!`);
       fetchDashboardData();

@@ -16,13 +16,15 @@ import {
   Bell, 
   Dumbbell, 
   CheckCircle2,
-  Lightbulb
+  Lightbulb,
+  Image as ImageIcon
 } from 'lucide-react';
 import { Quest, AttributeType } from '../types';
 import { soundFx } from '../sound';
 import inscribeBannerImg from '../assets/images/inscribe_banner_1789201955914.jpg';
 import goalRealityImg from '../assets/images/goal_reality_cliff_1789201973062.jpg';
 import questDeepworkImg from '../assets/images/quest_deepwork_1789200577920.jpg';
+import { QUEST_ART_CATALOG, getQuestPicture } from '../utils/questImages';
 
 interface AddQuestViewProps {
   onAddQuest: (newQuest: Quest) => void;
@@ -44,6 +46,7 @@ export const AddQuestView: React.FC<AddQuestViewProps> = ({
   const [goldReward, setGoldReward] = useState<string>('');
   const [attributeImpact, setAttributeImpact] = useState<AttributeType | ''>('');
   const [dueDate, setDueDate] = useState('');
+  const [selectedArtId, setSelectedArtId] = useState<string>('quest_deepwork');
 
   // Auto-adjust reward suggestions based on difficulty
   const handleDifficultyChange = (diff: 'Easy' | 'Medium' | 'Hard' | 'Epic' | '') => {
@@ -100,6 +103,9 @@ export const AddQuestView: React.FC<AddQuestViewProps> = ({
     const finalCategory = category || 'PERSONAL';
     const finalAttr: AttributeType = (attributeImpact ? attributeImpact.toLowerCase() as AttributeType : 'discipline');
 
+    const chosenArt = QUEST_ART_CATALOG.find(a => a.id === selectedArtId);
+    const questImage = chosenArt ? chosenArt.image : getQuestPicture({ category: finalCategory, title: questName });
+
     const newQuest: Quest = {
       id: `quest-${Date.now()}`,
       title: questName.trim(),
@@ -114,7 +120,7 @@ export const AddQuestView: React.FC<AddQuestViewProps> = ({
       estimatedMinutes: 30,
       currentMinutes: 0,
       difficulty: difficulty || 'Medium',
-      image: questDeepworkImg
+      image: questImage
     };
 
     soundFx.playQuestComplete();
@@ -239,7 +245,15 @@ export const AddQuestView: React.FC<AddQuestViewProps> = ({
                   <select
                     id="quest-category-select"
                     value={category}
-                    onChange={(e) => setCategory(e.target.value as Quest['category'])}
+                    onChange={(e) => {
+                      const newCat = e.target.value as Quest['category'];
+                      setCategory(newCat);
+                      if (newCat === 'STUDY') setSelectedArtId('quest_deepwork');
+                      else if (newCat === 'HEALTH') setSelectedArtId('quest_gym_weights');
+                      else if (newCat === 'WORK') setSelectedArtId('quest_plan_day');
+                      else if (newCat === 'DISCIPLINE') setSelectedArtId('quest_clean_space');
+                      else if (newCat === 'PERSONAL') setSelectedArtId('quest_reading');
+                    }}
                     required
                     className="w-full px-4 py-3 rounded-xl bg-[#090516]/90 border border-purple-900/50 focus:border-purple-400 text-slate-200 text-sm focus:outline-none focus:ring-1 focus:ring-purple-400 transition-all cursor-pointer"
                   >
@@ -270,6 +284,60 @@ export const AddQuestView: React.FC<AddQuestViewProps> = ({
                     <option value="Hard">Hard (+400 XP, +70 Gold)</option>
                     <option value="Epic">Epic (+600 XP, +100 Gold)</option>
                   </select>
+                </div>
+              </div>
+
+              {/* Quest Picture / Artwork Selector */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2 text-xs font-bold text-slate-300">
+                    <ImageIcon className="w-3.5 h-3.5 text-purple-400" />
+                    <span>Quest Artwork & Picture</span>
+                  </div>
+                  <span className="text-[11px] text-purple-300/80 font-medium">
+                    Pick a thematic fantasy illustration
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+                  {QUEST_ART_CATALOG.map((art) => {
+                    const isArtSelected = selectedArtId === art.id;
+                    return (
+                      <button
+                        key={art.id}
+                        type="button"
+                        onClick={() => {
+                          soundFx.playClick();
+                          setSelectedArtId(art.id);
+                        }}
+                        className={`
+                          relative rounded-xl overflow-hidden p-1.5 border text-left transition-all group cursor-pointer
+                          ${isArtSelected 
+                            ? 'border-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.5)] scale-[1.03] bg-purple-950/60 ring-1 ring-amber-400' 
+                            : 'border-purple-900/40 hover:border-purple-500/60 bg-[#090516]/80 opacity-75 hover:opacity-100'}
+                        `}
+                      >
+                        <div className="relative w-full h-16 rounded-lg overflow-hidden mb-1.5 bg-black/40">
+                          <img
+                            src={art.image}
+                            alt={art.name}
+                            referrerPolicy="no-referrer"
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                          />
+                          {isArtSelected && (
+                            <div className="absolute inset-0 bg-amber-500/20 border border-amber-400/80 rounded-lg flex items-center justify-center">
+                              <span className="w-5 h-5 rounded-full bg-amber-400 text-black flex items-center justify-center font-black text-xs shadow-md">
+                                ✓
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                        <p className="text-[10px] font-bold text-white truncate px-0.5">
+                          {art.name}
+                        </p>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -397,30 +465,41 @@ export const AddQuestView: React.FC<AddQuestViewProps> = ({
               QUEST PREVIEW
             </h3>
 
-            <div className="relative rounded-2xl p-5 border border-amber-500/50 bg-gradient-to-b from-[#1c1206]/95 via-[#120b02]/98 to-[#090502] shadow-[0_0_25px_rgba(245,158,11,0.2)] overflow-hidden">
-              
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex items-start gap-3">
-                  {/* Glowing Tome Icon */}
-                  <div className="w-11 h-11 rounded-xl bg-gradient-to-b from-amber-600/40 to-yellow-950/60 border border-amber-400/50 flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(245,158,11,0.4)]">
-                    <BookOpen className="w-6 h-6 text-amber-300 drop-shadow-[0_0_8px_rgba(251,191,36,0.9)]" />
-                  </div>
+            <div className="relative rounded-2xl border border-amber-500/50 bg-gradient-to-b from-[#1c1206]/95 via-[#120b02]/98 to-[#090502] shadow-[0_0_25px_rgba(245,158,11,0.2)] overflow-hidden">
+              {/* Top Picture Banner Preview */}
+              <div className="relative w-full h-32 overflow-hidden bg-purple-950/60">
+                <img
+                  src={QUEST_ART_CATALOG.find(a => a.id === selectedArtId)?.image || questDeepworkImg}
+                  alt="Selected Quest Artwork"
+                  referrerPolicy="no-referrer"
+                  className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#120b02] via-transparent to-transparent opacity-90" />
+                <div className="absolute top-2.5 right-2.5">
+                  <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-cyan-950/80 border border-cyan-400/60 text-cyan-200 tracking-wider uppercase shrink-0 shadow-[0_0_10px_rgba(6,182,212,0.3)] backdrop-blur-md">
+                    {category || 'CATEGORY'}
+                  </span>
+                </div>
+              </div>
 
-                  <div>
-                    <h4 className="font-sans text-sm font-bold text-white tracking-wide leading-snug line-clamp-1">
-                      {questName.trim() || 'Your Quest Title'}
-                    </h4>
-                    <p className="text-xs text-slate-400 mt-1 line-clamp-2">
-                      {description.trim() || 'A short description will appear here...'}
-                    </p>
+              <div className="p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-start gap-3">
+                    {/* Glowing Tome Icon */}
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-b from-amber-600/40 to-yellow-950/60 border border-amber-400/50 flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(245,158,11,0.4)]">
+                      <BookOpen className="w-5 h-5 text-amber-300 drop-shadow-[0_0_8px_rgba(251,191,36,0.9)]" />
+                    </div>
+
+                    <div>
+                      <h4 className="font-sans text-sm font-bold text-white tracking-wide leading-snug line-clamp-1">
+                        {questName.trim() || 'Your Quest Title'}
+                      </h4>
+                      <p className="text-xs text-slate-400 mt-1 line-clamp-2">
+                        {description.trim() || 'A short description will appear here...'}
+                      </p>
+                    </div>
                   </div>
                 </div>
-
-                {/* Category Pill */}
-                <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-cyan-950/80 border border-cyan-400/60 text-cyan-200 tracking-wider uppercase shrink-0 shadow-[0_0_10px_rgba(6,182,212,0.3)]">
-                  {category || 'CATEGORY'}
-                </span>
-              </div>
 
               {/* Rewards Row */}
               <div className="flex items-center gap-4 mt-4 pt-3 border-t border-amber-950/40 text-xs font-bold">
@@ -446,8 +525,9 @@ export const AddQuestView: React.FC<AddQuestViewProps> = ({
               </div>
             </div>
           </div>
+        </div>
 
-          {/* TIPS FOR A GREAT QUEST */}
+        {/* TIPS FOR A GREAT QUEST */}
           <div className="relative rounded-2xl p-5 border border-purple-900/40 bg-gradient-to-b from-[#0e0a1e]/90 to-[#070512]/95 shadow-xl">
             <div className="flex items-center gap-2 mb-4 pb-2 border-b border-purple-950/50">
               <Lightbulb className="w-4 h-4 text-amber-400 drop-shadow-[0_0_6px_rgba(251,191,36,0.8)]" />
