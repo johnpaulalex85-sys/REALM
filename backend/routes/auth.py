@@ -165,23 +165,38 @@ def login():
         return error_response('INVALID_CREDENTIALS', 'Invalid email or password', 401)
 
     stored_hash = user.get('password_hash', '')
+    if isinstance(stored_hash, bytes):
+        try:
+            stored_hash = stored_hash.decode('utf-8', errors='ignore')
+        except Exception:
+            stored_hash = ''
+    elif not isinstance(stored_hash, str):
+        stored_hash = str(stored_hash or '')
+
     is_valid = False
 
-    # 1. Try Werkzeug password hash check (e.g. pbkdf2:sha256)
-    if stored_hash.startswith(('pbkdf2:', 'scrypt:', 'sha256:')):
+    # 1. Try Bcrypt check if formatted as bcrypt hash ($2a$, $2b$, $2y$)
+    if stored_hash.startswith(('$2a$', '$2b$', '$2y$')):
+        try:
+            is_valid = bcrypt.checkpw(password.encode('utf-8'), stored_hash.encode('utf-8'))
+        except Exception:
+            is_valid = False
+
+    # 2. Try Werkzeug password hash check (e.g. pbkdf2:sha256)
+    if not is_valid and stored_hash.startswith(('pbkdf2:', 'scrypt:', 'sha256:')):
         try:
             is_valid = check_password_hash(stored_hash, password)
         except Exception:
             is_valid = False
 
-    # 2. Try Bcrypt password hash check
+    # 3. Fallback: try raw bcrypt check safely
     if not is_valid and stored_hash:
         try:
             is_valid = bcrypt.checkpw(password.encode('utf-8'), stored_hash.encode('utf-8'))
         except Exception:
             is_valid = False
 
-    # 3. Fallback for legacy plain-text password check
+    # 4. Fallback for legacy plain-text password check
     if not is_valid and stored_hash == password:
         is_valid = True
 
