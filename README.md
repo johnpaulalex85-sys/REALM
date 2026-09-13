@@ -170,3 +170,22 @@ The Vite dev server will run on: `http://localhost:5173`
 2. **JWT Route Guarding**: Authenticated endpoints verify JWT tokens via the `@token_required` decorator.
 3. **Server-Side Validation**: All quest progress, gold earnings, XP calculations, and item transactions are calculated and validated server-side.
 4. **Duplicate Claim Protection**: The backend enforces unique records in `quest_completions` and daily date checks on `streaks` to prevent duplicate XP/gold farming.
+
+---
+
+## 👥 Credits
+
+REALM — Life RPG was developed as a **group project** by:
+
+| Team Member | Role / Contribution |
+| :--- | :--- |
+| **[John Paul Alex]** | Full-Stack Development, Backend, Database & Integration |
+| **[Vishal Vivek]** | Frontend Development & UI/UX |
+| **[Ajay Joy]** | Backend Development & API Integration |
+| **[A.Vikram]** | Testing, Documentation & Project Support |
+
+### 🤝 Team Collaboration
+
+The project was collaboratively designed and developed by all team members.  
+Contributions included application architecture, frontend development, backend API development, database integration, authentication, gamification mechanics, testing, UI/UX design, and documentation.
+
